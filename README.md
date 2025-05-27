@@ -94,3 +94,8 @@ Com estas análises, conseguimos:
 - Melhorar a **visualização dos dados com formatações adequadas**.
 - Classificar **o impacto financeiro**, facilitando a tomada de decisões.
 
+### **Resultado Final**
+-Caso você tenha conseguido chegar a esse resultado, você pode conferir a seguir:
+
+
+
