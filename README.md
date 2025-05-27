@@ -95,7 +95,7 @@ Com estas análises, conseguimos:
 - Classificar **o impacto financeiro**, facilitando a tomada de decisões.
 
 ### **Resultado Final**
--Caso você tenha conseguido chegar a esse resultado, você pode conferir a seguir:
+- Caso você tenha conseguido chegar a esse resultado, você pode conferir a seguir:
 
 
 [Resolução tarefa 7.pdf](https://github.com/user-attachments/files/20447671/Resolucao.tarefa.7.pdf)
