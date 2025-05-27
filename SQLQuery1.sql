@@ -4,7 +4,7 @@
 -- Muitos dos produtos estão cadastrados sem cor, logo irei utilizar o comando COALESCE para retornar os valores NULL como 'Sem cores' 
 -- Em seguida, vou tratar os dados, como a formtação dos números 
 
-
+```
 select *
 from Purchasing.PurchaseOrderDetail
 
@@ -26,13 +26,13 @@ INNER JOIN Purchasing.PurchaseOrderDetail u ON p.ProductID = u.ProductID
 GROUP BY p.Name, p.ProductNumber, p.Color
 HAVING SUM(u.RejectedQty) > 0
 ORDER BY SUM(u.ReceivedQty) DESC;
-
+```
 --- Correção 1 ---
 
 -- NO = Formatação para número inteiros
 -- C2 = Formatação para números monetários
 -- Calculo para faturamento líquido (O que eu realmente faturei) = FORMAT(SUM(u.Linetotal) - SUM(u.RejectedQty * u.UnitPrice), 'C2') as Faturamento_L�quido
-
+```
 SELECT 
     p.Name AS Nome,
     p.ProductNumber AS Identificaçãoo,
@@ -48,11 +48,11 @@ INNER JOIN Purchasing.PurchaseOrderDetail u ON p.ProductID = u.ProductID
 GROUP BY p.Name, p.ProductNumber, p.Color
 HAVING SUM(u.RejectedQty) > 0
 ORDER BY SUM(u.ReceivedQty * u.UnitPrice) DESC
-
+```
 
 -- Para sabermos se um produto teve um real impacto no faturamento, utilizaremos uma porcentagem de 20% sobre o valor, logo, podemos definir como ALTO, MÉDIO ou ELSE = para condição BAIXA)
 
-
+```
 SELECT 
     p.Name AS Nome,
     p.ProductNumber AS Identificação,
@@ -73,4 +73,4 @@ INNER JOIN Purchasing.PurchaseOrderDetail u ON p.ProductID = u.ProductID
 GROUP BY p.Name, p.ProductNumber, p.Color
 HAVING SUM(u.RejectedQty) > 0
 ORDER BY SUM(u.ReceivedQty * u.UnitPrice) DESC
-
+```
