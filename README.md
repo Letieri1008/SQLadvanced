@@ -128,7 +128,7 @@ END AS Prejuizo
 
 #### **Como essa lógica se aplica?**
 - Se o prejuízo **supera 10% do faturamento total** (`LineTotal`), ele é categorizado como **Alto**.
-- Se estiver entre **5% e 20% do faturamento**, é considerado **Médio**.
+- Se estiver entre **5% e 2% do faturamento**, é considerado **Médio**.
 - Caso contrário, o prejuízo é **Baixo**.
 
 ### 📦 Lógica do remanejamento
