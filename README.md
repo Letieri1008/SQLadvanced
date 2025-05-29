@@ -145,17 +145,19 @@ END AS Remanejamento
 
 ---
 ### Código de consulta Atualizada 
+
+sql
 ```
 SELECT 
     p.Name AS Nome,
     p.ProductNumber AS Identificação,
-    ps.Name as Subcategoria,
+    ps.Name AS Subcategoria,
     COALESCE(p.Color, 'Sem cor') AS Cor,
     FORMAT(SUM(u.RejectedQty), 'N0') AS Devoluções,
     FORMAT(SUM(u.ReceivedQty), 'N0') AS Recebido,
     FORMAT(SUM(u.LineTotal), 'C2') AS Faturamento,
     FORMAT(SUM(u.StockedQty), 'N0') AS Estoque,
-    FORMAT(SUM(p.SafetyStockLevel), 'N0') SafeEstoque,
+    FORMAT(SUM(p.SafetyStockLevel), 'N0') AS SafeEstoque,
     FORMAT(SUM(u.LineTotal) - SUM(u.RejectedQty * u.UnitPrice), 'C2') AS Faturamento_Liquido,
     FORMAT(SUM(u.RejectedQty * u.UnitPrice), 'C2') AS Prejuizo_Financeiro,
     CASE
@@ -164,18 +166,16 @@ SELECT
         ELSE 'Baixo'
     END AS Prejuizo,
     CASE
-        WHEN SUM(u.RejectedQty * u.Unitprice) > 50000 THEN 'Remanejo'
+        WHEN SUM(u.RejectedQty * u.UnitPrice) > 50000 THEN 'Remanejo'
         ELSE ' - '
-        END as Remanejamento
+    END AS Remanejamento
 FROM Production.Product p
 INNER JOIN Purchasing.PurchaseOrderDetail u ON p.ProductID = u.ProductID
 INNER JOIN Production.ProductSubcategory ps ON p.ProductSubcategoryID = ps.ProductSubcategoryID
-GROUP BY p.Name, p.ProductNumber, p.Color,  ps.Name
+GROUP BY p.Name, p.ProductNumber, p.Color, ps.Name
 HAVING SUM(u.RejectedQty) > 0
 ORDER BY SUM(u.ReceivedQty * u.UnitPrice) DESC;
-
 ```
-
 
 
 
