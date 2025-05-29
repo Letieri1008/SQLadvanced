@@ -100,5 +100,83 @@ Com estas análises, conseguimos:
 
 [Resolução tarefa 7.pdf](https://github.com/user-attachments/files/20447671/Resolucao.tarefa.7.pdf)
 
+## Atualização SQL/ Avançado
+
+### 🔎 Estrutura do cálculo
+O prejuízo financeiro é calculado com esta expressão dentro da query:
+
+```sql
+SUM(u.RejectedQty * u.UnitPrice) AS Prejuizo_Financeiro
+```
+
+#### **Como funciona?**
+1. `RejectedQty`: quantidade de produtos rejeitados/devolvidos.
+2. `UnitPrice`: preço unitário do produto.
+3. Multiplicamos `RejectedQty * UnitPrice` para obter o **valor total perdido** por cada produto.
+4. `SUM(...)` é usado para somar os prejuízos ao longo de todas as compras, agregando os valores por produto.
+
+### 📊 Classificação do prejuízo
+Para categorizar o impacto financeiro, utilizamos a cláusula `CASE`:
+
+```sql
+CASE
+    WHEN SUM(u.RejectedQty * u.UnitPrice) > (SUM(u.LineTotal) * 0.1) THEN 'Alto'
+    WHEN SUM(u.RejectedQty * u.UnitPrice) BETWEEN (SUM(u.LineTotal) * 0.05) AND (SUM(u.LineTotal) * 0.2) THEN 'Médio'
+    ELSE 'Baixo'
+END AS Prejuizo
+```
+
+#### **Como essa lógica se aplica?**
+- Se o prejuízo **supera 10% do faturamento total** (`LineTotal`), ele é categorizado como **Alto**.
+- Se estiver entre **5% e 20% do faturamento**, é considerado **Médio**.
+- Caso contrário, o prejuízo é **Baixo**.
+
+### 📦 Lógica do remanejamento
+O objetivo da análise é identificar produtos que precisam ser **remanejados**. Para isso, temos:
+
+```sql
+CASE
+    WHEN SUM(u.RejectedQty * u.UnitPrice) > 50000 THEN 'Remanejo'
+    ELSE ' - '
+END AS Remanejamento
+```
+
+💡 **Se um produto acumulou mais de R$ 50.000 em prejuízos, ele é marcado para avaliação e possível remanejamento de estoque**.
+
+---
+### Código de consulta Atualizada 
+```
+SELECT 
+    p.Name AS Nome,
+    p.ProductNumber AS Identificação,
+    ps.Name as Subcategoria,
+    COALESCE(p.Color, 'Sem cor') AS Cor,
+    FORMAT(SUM(u.RejectedQty), 'N0') AS Devoluções,
+    FORMAT(SUM(u.ReceivedQty), 'N0') AS Recebido,
+    FORMAT(SUM(u.LineTotal), 'C2') AS Faturamento,
+    FORMAT(SUM(u.StockedQty), 'N0') AS Estoque,
+    FORMAT(SUM(p.SafetyStockLevel), 'N0') SafeEstoque,
+    FORMAT(SUM(u.LineTotal) - SUM(u.RejectedQty * u.UnitPrice), 'C2') AS Faturamento_Liquido,
+    FORMAT(SUM(u.RejectedQty * u.UnitPrice), 'C2') AS Prejuizo_Financeiro,
+    CASE
+        WHEN SUM(u.RejectedQty * u.UnitPrice) > (SUM(u.LineTotal) * 0.1) THEN 'Alto'
+        WHEN SUM(u.RejectedQty * u.UnitPrice) BETWEEN (SUM(u.LineTotal) * 0.05) AND (SUM(u.LineTotal) * 0.2) THEN 'Médio'
+        ELSE 'Baixo'
+    END AS Prejuizo,
+    CASE
+        WHEN SUM(u.RejectedQty * u.Unitprice) > 50000 THEN 'Remanejo'
+        ELSE ' - '
+        END as Remanejamento
+FROM Production.Product p
+INNER JOIN Purchasing.PurchaseOrderDetail u ON p.ProductID = u.ProductID
+INNER JOIN Production.ProductSubcategory ps ON p.ProductSubcategoryID = ps.ProductSubcategoryID
+GROUP BY p.Name, p.ProductNumber, p.Color,  ps.Name
+HAVING SUM(u.RejectedQty) > 0
+ORDER BY SUM(u.ReceivedQty * u.UnitPrice) DESC;
+
+```
+
+
+
 
 
